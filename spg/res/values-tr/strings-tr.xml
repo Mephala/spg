@@ -7,5 +7,5 @@
     <string name="action_search">Arama</string>
      <string name="button_send">Cebuddey</string>
      <string name="instant_gourme">Yemeğine Not Ver!</string>
-
+	<string name="title_activity_post_gourmet"></string>
 </resources>

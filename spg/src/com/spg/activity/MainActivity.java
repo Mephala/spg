@@ -25,11 +25,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.spg.R;
+import com.spg.UserSession;
 import com.spg.async.ImageFetcher;
 import com.spg.utility.ImageUtils;
 
@@ -66,9 +66,7 @@ public class MainActivity extends Activity {
 				String encodedText = imageFetcher.getImageDto().getEncodedData();
 				Bitmap bm = ImageUtils.createBitmapFromEncodedString(encodedText);
 				d = new BitmapDrawable(getResources(), bm);
-				System.err.println(bm.getHeight());
-				System.err.println(bm.getWidth());
-				button.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, d, null);
+				button.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, null, null);
 				layout.addView(button);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
@@ -152,9 +150,10 @@ public class MainActivity extends Activity {
 		if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 			Bundle extras = data.getExtras();
 			Bitmap imageBitmap = (Bitmap) extras.get("data");
-			ImageView mImageView = new ImageView(getApplicationContext());
-			mImageView.setImageBitmap(imageBitmap);
-			layout.addView(mImageView);
+			UserSession userSession = UserSession.getInstance();
+			userSession.setTakenPicture(imageBitmap);
+			Intent intent = new Intent(this, PostGourmetActivity.class);
+			startActivity(intent);
 		}
 	}
 
