@@ -6,5 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_search">Search</string>
      <string name="button_send">Cebuddey</string>
+     <string name="instant_gourme">Post Your Food!</string>
+     
 
 </resources>

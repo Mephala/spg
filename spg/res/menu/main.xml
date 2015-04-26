@@ -2,6 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.spg.MainActivity" >
     
+    <item android:id="@+id/action_gourme_camera"
+          android:icon="@drawable/ic_action_camera"
+          android:title="@string/instant_gourme"
+          android:showAsAction="ifRoom"/>
+    
      <item android:id="@+id/action_search"
           android:icon="@drawable/ic_action_search"
           android:title="@string/action_search"

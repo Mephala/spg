@@ -11,62 +11,65 @@ import java.net.URL;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.spg.R;
+import com.spg.async.ImageFetcher;
 import com.spg.utility.ImageUtils;
-import com.spg.utility.NetworkUtils;
 
 public class MainActivity extends Activity {
 
 	ImageButton imageButton;
 	Drawable d = null;
 	String text = null;
+	LinearLayout layout;
+
+	static final int REQUEST_IMAGE_CAPTURE = 1;
+
+	private void dispatchTakePictureIntent() {
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+			startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+		}
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Button button = (Button) findViewById(R.id.button_send);
-
+		layout = (LinearLayout) findViewById(R.id.mainLayout);
+		Button button = new Button(getApplicationContext());
+		button.setText("Memeli");
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		if (networkInfo != null && networkInfo.isConnected()) {
-
-			Thread a = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					String url = "http://192.168.2.85:8080/serializeImage.do?id=507";
-
-					try {
-						String encodedText = NetworkUtils.downloadContentAsString(url, "US-ASCII");
-						Bitmap bm = ImageUtils.createBitmapFromEncodedString(encodedText);
-						d = new BitmapDrawable(getResources(), bm);
-
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-			});
-			a.start();
+			ImageFetcher imageFetcher = new ImageFetcher(507l);
+			imageFetcher.start();
 			try {
-				a.join();
-				button.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, null, null);
+				imageFetcher.join();
+				String encodedText = imageFetcher.getImageDto().getEncodedData();
+				Bitmap bm = ImageUtils.createBitmapFromEncodedString(encodedText);
+				d = new BitmapDrawable(getResources(), bm);
+				System.err.println(bm.getHeight());
+				System.err.println(bm.getWidth());
+				button.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, d, null);
+				layout.addView(button);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -145,6 +148,17 @@ public class MainActivity extends Activity {
 	}
 
 	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+			Bundle extras = data.getExtras();
+			Bitmap imageBitmap = (Bitmap) extras.get("data");
+			ImageView mImageView = new ImageView(getApplicationContext());
+			mImageView.setImageBitmap(imageBitmap);
+			layout.addView(mImageView);
+		}
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
@@ -152,6 +166,9 @@ public class MainActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
+		}
+		if (id == R.id.action_gourme_camera) {
+			dispatchTakePictureIntent();
 		}
 		return super.onOptionsItemSelected(item);
 	}
