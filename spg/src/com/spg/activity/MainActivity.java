@@ -1,14 +1,18 @@
 package com.spg.activity;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
+import service.provider.common.dto.ImageDto;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -30,13 +34,14 @@ import android.widget.Toast;
 
 import com.spg.R;
 import com.spg.UserSession;
+import com.spg.async.AllImageDataListFetcher;
 import com.spg.async.ImageFetcher;
 import com.spg.utility.ImageUtils;
 
 public class MainActivity extends Activity {
 
 	ImageButton imageButton;
-	Drawable d = null;
+	private ExecutorService executor = Executors.newCachedThreadPool();
 	String text = null;
 	LinearLayout layout;
 
@@ -54,23 +59,38 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		layout = (LinearLayout) findViewById(R.id.mainLayout);
-		Button button = new Button(getApplicationContext());
-		button.setText("Memeli");
 		ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
 		if (networkInfo != null && networkInfo.isConnected()) {
-			ImageFetcher imageFetcher = new ImageFetcher(507l);
-			imageFetcher.start();
 			try {
-				imageFetcher.join();
-				String encodedText = imageFetcher.getImageDto().getEncodedData();
-				Bitmap bm = ImageUtils.createBitmapFromEncodedString(encodedText);
-				d = new BitmapDrawable(getResources(), bm);
-				button.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, null, null);
-				layout.addView(button);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				AllImageDataListFetcher allImageDataFetcher = new AllImageDataListFetcher();
+				allImageDataFetcher.start();
+				allImageDataFetcher.join();
+				List<Long> imageIds = allImageDataFetcher.getAllImageIds();
+				if (imageIds != null) {
+					List<Future<ImageDto>> imageFuturesList = new ArrayList<Future<ImageDto>>();
+					for (Long imageId : imageIds) {
+						ImageFetcher imageFetcher = new ImageFetcher(imageId);
+						imageFuturesList.add(executor.submit(imageFetcher));
+					}
+					for (@SuppressWarnings("rawtypes")
+					Future future : imageFuturesList) {
+						while (!future.isDone())
+							;
+					}
+					for (Future<ImageDto> imageFuture : imageFuturesList) {
+						ImageDto imageDto = imageFuture.get();
+						if (imageDto != null) {
+							String encodedText = imageDto.getEncodedData();
+							Bitmap bm = ImageUtils.createBitmapFromEncodedString(encodedText);
+							Drawable d = new BitmapDrawable(getResources(), bm);
+							String buttonText = "Memeli";
+							createMainPageButton(d, buttonText);
+						}
+					}
+				}
+			} catch (InterruptedException | ExecutionException e) {
+				System.err.println("Errorro");
 			}
 		} else {
 			Context context = getApplicationContext();
@@ -82,42 +102,11 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	private String downloadUrl(String myurl) throws IOException {
-		InputStream is = null;
-
-		int len = 1024 * 10;
-
-		try {
-			URL url = new URL(myurl);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setReadTimeout(10000 /* milliseconds */);
-			conn.setConnectTimeout(15000 /* milliseconds */);
-			conn.setRequestMethod("GET");
-			conn.setDoInput(true);
-			// Starts the query
-			conn.connect();
-			int response = conn.getResponseCode();
-			is = conn.getInputStream();
-			ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-			int nRead;
-			byte[] data = new byte[16384];
-
-			while ((nRead = is.read(data, 0, data.length)) != -1) {
-				buffer.write(data, 0, nRead);
-			}
-
-			buffer.flush();
-
-			return new String(buffer.toByteArray(), "US-ASCII");
-
-			// Makes sure that the InputStream is closed after the app is
-			// finished using it.
-		} finally {
-			if (is != null) {
-				is.close();
-			}
-		}
+	private void createMainPageButton(Drawable d, String buttonText) {
+		Button button = new Button(getApplicationContext());
+		button.setText(buttonText);
+		button.setCompoundDrawablesRelativeWithIntrinsicBounds(d, null, null, null);
+		layout.addView(button);
 	}
 
 	public String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {

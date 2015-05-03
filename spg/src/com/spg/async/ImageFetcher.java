@@ -1,29 +1,21 @@
 package com.spg.async;
 
+import java.util.concurrent.Callable;
+
 import service.provider.common.dto.ImageDto;
 
 import com.spg.utility.SPClient;
 
-public class ImageFetcher extends Thread {
+public class ImageFetcher implements Callable<ImageDto> {
 
-	private static ImageDto imageDto;
+	private final Long imageId;
 
-	public ImageFetcher(final Long imageId) {
-		this(new Runnable() {
-
-			@Override
-			public void run() {
-				imageDto = SPClient.getImageById(imageId);
-			}
-		});
+	public ImageFetcher(Long imageId) {
+		this.imageId = imageId;
 	}
 
-	private ImageFetcher(Runnable runnable) {
-		super(runnable);
+	@Override
+	public ImageDto call() throws Exception {
+		return SPClient.getImageById(imageId);
 	}
-
-	public ImageDto getImageDto() {
-		return imageDto;
-	}
-
 }

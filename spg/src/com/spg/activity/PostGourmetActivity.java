@@ -2,6 +2,7 @@ package com.spg.activity;
 
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.view.Display;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.spg.R;
 import com.spg.UserSession;
+import com.spg.utility.SPClient;
 
 public class PostGourmetActivity extends Activity {
 
@@ -60,6 +62,16 @@ public class PostGourmetActivity extends Activity {
 		RatingBar priceRating = new RatingBar(this);
 		formLayout.addView(priceTextView);
 		formLayout.addView(priceRating);
+		Thread saveImageThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				UserSession us = UserSession.getInstance();
+				Bitmap takenPicture = us.getTakenPicture();
+				SPClient.savePicture(takenPicture);
+			}
+		});
+		saveImageThread.start();
 	}
 
 	@Override
