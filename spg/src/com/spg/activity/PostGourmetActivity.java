@@ -62,7 +62,7 @@ public class PostGourmetActivity extends Activity {
 		imageView.setLayoutParams(imageViewLayoutParameters);
 		layout.addView(imageView);
 		TextView tasteTextView = new TextView(this);
-		tasteTextView.setText("Tat :");
+		tasteTextView.setText("Tat   :");
 		tasteTextView.setTextSize(textSize);
 		RelativeLayout.LayoutParams relativeLayoutParameters = createBelowRelativeLayoutParams(imageViewId);
 		tasteTextView.setLayoutParams(relativeLayoutParameters);
@@ -76,12 +76,12 @@ public class PostGourmetActivity extends Activity {
 		tasteRating.setLayoutParams(tasteViewRLParams);
 		layout.addView(tasteRating);
 		TextView speedTextView = new TextView(this);
-		speedTextView.setText("Hýz :");
+		speedTextView.setText("Hýz   :");
 		speedTextView.setTextSize(textSize);
 		speedTextView.setId(speedLabelId);
 		RelativeLayout.LayoutParams lp = createBelowRelativeLayoutParams(tasteLabelId);
 		lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-		lp.setMargins(0, 105, 0, 0);
+		lp.setMargins(0, 50, 0, 0);
 		speedTextView.setId(speedLabelId);
 		speedTextView.setLayoutParams(lp);
 		layout.addView(speedTextView);
@@ -98,6 +98,7 @@ public class PostGourmetActivity extends Activity {
 		priceTextView.setTextSize(textSize);
 		lp = createBelowRelativeLayoutParams(speedLabelId);
 		lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+		lp.setMargins(0, 45, 0, 0);
 		priceTextView.setLayoutParams(lp);
 		layout.addView(priceTextView);
 		RatingBar priceRating = new RatingBar(this);
