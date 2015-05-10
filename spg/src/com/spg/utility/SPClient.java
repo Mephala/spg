@@ -19,7 +19,7 @@ public class SPClient {
 	private static final String SPC_URL = "http://213.14.153.57/serviceProvider/";
 
 	static {
-		ServiceClient.initialize(SPC_URL);
+		// ServiceClient.initialize(SPC_URL);
 	}
 
 	public static ImageDto getImageById(Long id) {
