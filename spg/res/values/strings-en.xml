@@ -7,6 +7,11 @@
     <string name="action_search">Search</string>
      <string name="button_send">Cebuddey</string>
      <string name="instant_gourme">Post Your Food!</string>
+     <string name="enterYourThoughts">Please enter your comments about the food.</string>
+     <string name="postGourme">Post!</string>
+     <string name="taste">Taste</string>
+     <string name="speed">Speed</string>
+     <string name="service">Service</string>
      <string name="title_activity_post_gourmet"></string>
      
      

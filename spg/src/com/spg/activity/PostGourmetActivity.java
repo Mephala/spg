@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
@@ -22,13 +24,15 @@ public class PostGourmetActivity extends Activity {
 
 	RelativeLayout layout;
 	UserSession userSession = UserSession.getInstance();
+	private float textSize = 33f;
 	private int imageViewId = 9999;
 	private int tasteLabelId = 10000;
 	private int speedLabelId = 10001;
 	private int tasteRatingId = 10002;
 	private int priceLabelId = 10003;
 	private int speedRatingId = 10004;
-	private float textSize = 33f;
+	private int editTextId = 10005;
+	private int postButtonId = 10006;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +66,7 @@ public class PostGourmetActivity extends Activity {
 		imageView.setLayoutParams(imageViewLayoutParameters);
 		layout.addView(imageView);
 		TextView tasteTextView = new TextView(this);
-		tasteTextView.setText("Tat   :");
+		tasteTextView.setText(getResources().getString(R.string.taste));
 		tasteTextView.setTextSize(textSize);
 		RelativeLayout.LayoutParams relativeLayoutParameters = createBelowRelativeLayoutParams(imageViewId);
 		tasteTextView.setLayoutParams(relativeLayoutParameters);
@@ -76,7 +80,7 @@ public class PostGourmetActivity extends Activity {
 		tasteRating.setLayoutParams(tasteViewRLParams);
 		layout.addView(tasteRating);
 		TextView speedTextView = new TextView(this);
-		speedTextView.setText("Hýz   :");
+		speedTextView.setText(getResources().getString(R.string.speed));
 		speedTextView.setTextSize(textSize);
 		speedTextView.setId(speedLabelId);
 		RelativeLayout.LayoutParams lp = createBelowRelativeLayoutParams(tasteLabelId);
@@ -93,7 +97,7 @@ public class PostGourmetActivity extends Activity {
 		speedRating.setId(speedRatingId);
 		layout.addView(speedRating);
 		TextView priceTextView = new TextView(this);
-		priceTextView.setText("Fiyat :");
+		priceTextView.setText(getResources().getString(R.string.service));
 		priceTextView.setId(priceLabelId);
 		priceTextView.setTextSize(textSize);
 		lp = createBelowRelativeLayoutParams(speedLabelId);
@@ -107,6 +111,18 @@ public class PostGourmetActivity extends Activity {
 		lp.addRule(RelativeLayout.RIGHT_OF, priceLabelId);
 		priceRating.setLayoutParams(lp);
 		layout.addView(priceRating);
+		EditText editText = new EditText(this);
+		editText.setId(editTextId);
+		lp = createBelowRelativeLayoutParams(priceLabelId);
+		editText.setLayoutParams(lp);
+		editText.setHint(getResources().getString(R.string.enterYourThoughts));
+		layout.addView(editText);
+		Button postButton = new Button(this);
+		postButton.setId(postButtonId);
+		lp = createBelowRelativeLayoutParams(editTextId);
+		postButton.setLayoutParams(lp);
+		postButton.setText(getResources().getString(R.string.postGourme));
+		layout.addView(postButton);
 	}
 
 	private android.widget.RelativeLayout.LayoutParams createNextToRightRelativeLayoutParams(int viewId) {

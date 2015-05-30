@@ -7,5 +7,10 @@
     <string name="action_search">Arama</string>
      <string name="button_send">Cebuddey</string>
      <string name="instant_gourme">Yemeğine Not Ver!</string>
+     <string name="enterYourThoughts">Lütfen yorumunuzu buraya giriniz.</string>
+     <string name="postGourme">Gönder</string>
+     <string name="taste">Lezzet</string>
+     <string name="speed">Hız</string>
+     <string name="service">Servis</string>
 	<string name="title_activity_post_gourmet"></string>
 </resources>
