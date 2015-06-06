@@ -12,6 +12,7 @@
      <string name="taste">Taste</string>
      <string name="speed">Speed</string>
      <string name="service">Service</string>
+     <string name="unknownLocation">Your location does not exist in our records. Please tell us where you are.</string>
      <string name="title_activity_post_gourmet"></string>
      
      

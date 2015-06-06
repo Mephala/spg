@@ -12,5 +12,6 @@
      <string name="taste">Lezzet</string>
      <string name="speed">Hız</string>
      <string name="service">Servis</string>
+     <string name="unknownLocation">Bulunduğunuz yer henüz sistemimizde kaydedilmemiş.Lütfen nerede olduğunuzu belirtin.</string>
 	<string name="title_activity_post_gourmet"></string>
 </resources>

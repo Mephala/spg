@@ -33,11 +33,15 @@ public class PostGourmetActivity extends Activity {
 	private int speedRatingId = 10004;
 	private int editTextId = 10005;
 	private int postButtonId = 10006;
+	private int locationEditTextId = 10007;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_post_gourmet);
+		GPSTracker gpsTracker = new GPSTracker(this);
+		gpsTracker.getIsGPSTrackingEnabled();
+
 		Thread saveImageThread = new Thread(new Runnable() {
 
 			@Override
@@ -111,9 +115,15 @@ public class PostGourmetActivity extends Activity {
 		lp.addRule(RelativeLayout.RIGHT_OF, priceLabelId);
 		priceRating.setLayoutParams(lp);
 		layout.addView(priceRating);
+		EditText locationText = new EditText(this);
+		locationText.setId(locationEditTextId);
+		lp = createBelowRelativeLayoutParams(priceLabelId);
+		locationText.setLayoutParams(lp);
+		locationText.setHint(getResources().getString(R.string.unknownLocation));
+		layout.addView(locationText);
 		EditText editText = new EditText(this);
 		editText.setId(editTextId);
-		lp = createBelowRelativeLayoutParams(priceLabelId);
+		lp = createBelowRelativeLayoutParams(locationEditTextId);
 		editText.setLayoutParams(lp);
 		editText.setHint(getResources().getString(R.string.enterYourThoughts));
 		layout.addView(editText);
@@ -123,6 +133,8 @@ public class PostGourmetActivity extends Activity {
 		postButton.setLayoutParams(lp);
 		postButton.setText(getResources().getString(R.string.postGourme));
 		layout.addView(postButton);
+		// Toast.makeText(getBaseContext(), "Long:" + longitude +
+		// " , Lattitude:" + latitude, Toast.LENGTH_LONG).show();
 	}
 
 	private android.widget.RelativeLayout.LayoutParams createNextToRightRelativeLayoutParams(int viewId) {
