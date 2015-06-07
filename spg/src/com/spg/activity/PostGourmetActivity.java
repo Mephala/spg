@@ -15,9 +15,11 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.spg.R;
 import com.spg.UserSession;
+import com.spg.utility.Devices;
 import com.spg.utility.SPClient;
 
 public class PostGourmetActivity extends Activity {
@@ -34,13 +36,15 @@ public class PostGourmetActivity extends Activity {
 	private int editTextId = 10005;
 	private int postButtonId = 10006;
 	private int locationEditTextId = 10007;
+	private GPSTracker gpsTracker;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_post_gourmet);
-		GPSTracker gpsTracker = new GPSTracker(this);
+		this.gpsTracker = new GPSTracker(this);
 		gpsTracker.getIsGPSTrackingEnabled();
+		String deviceName = Devices.getDeviceName();
 
 		Thread saveImageThread = new Thread(new Runnable() {
 
@@ -133,8 +137,10 @@ public class PostGourmetActivity extends Activity {
 		postButton.setLayoutParams(lp);
 		postButton.setText(getResources().getString(R.string.postGourme));
 		layout.addView(postButton);
-		// Toast.makeText(getBaseContext(), "Long:" + longitude +
-		// " , Lattitude:" + latitude, Toast.LENGTH_LONG).show();
+		double longitude = gpsTracker.getLongitude();
+		double latitude = gpsTracker.getLatitude();
+
+		Toast.makeText(getBaseContext(), "Long:" + longitude + " , Lattitude:" + latitude + " , DeviceName:" + deviceName, Toast.LENGTH_LONG).show();
 	}
 
 	private android.widget.RelativeLayout.LayoutParams createNextToRightRelativeLayoutParams(int viewId) {

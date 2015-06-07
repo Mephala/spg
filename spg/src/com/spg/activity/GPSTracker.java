@@ -40,10 +40,10 @@ public class GPSTracker extends Service implements LocationListener {
 	int geocoderMaxResults = 1;
 
 	// The minimum distance to change updates in meters
-	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10 meters
+	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 10 meters
 
 	// The minimum time between updates in milliseconds
-	private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+	private static final long MIN_TIME_BW_UPDATES = 0; // 1 minute
 
 	// Declaring a Location Manager
 	protected LocationManager locationManager;
@@ -102,11 +102,14 @@ public class GPSTracker extends Service implements LocationListener {
 
 			// Application can use GPS or Network Provider
 			if (!provider_info.isEmpty()) {
+				System.err.println("Trying to get location via provider: " + provider_info);
 				locationManager.requestLocationUpdates(provider_info, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
 				if (locationManager != null) {
 					location = locationManager.getLastKnownLocation(provider_info);
 					updateGPSCoordinates();
+					if (location == null)
+						location = getLastKnownLocation();
 				}
 			}
 		} catch (Exception e) {
@@ -123,6 +126,28 @@ public class GPSTracker extends Service implements LocationListener {
 			latitude = location.getLatitude();
 			longitude = location.getLongitude();
 		}
+	}
+
+	private Location getLastKnownLocation() {
+		List<String> providers = locationManager.getProviders(true);
+		Location bestLocation = null;
+		for (String provider : providers) {
+			Location l = locationManager.getLastKnownLocation(provider);
+			// Log.d("last known location, provider: %s, location: %s",
+			// provider, l);
+
+			if (l == null) {
+				continue;
+			}
+			if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+				// ALog.d("found best last known location: %s", l);
+				bestLocation = l;
+			}
+		}
+		if (bestLocation == null) {
+			return null;
+		}
+		return bestLocation;
 	}
 
 	/**
