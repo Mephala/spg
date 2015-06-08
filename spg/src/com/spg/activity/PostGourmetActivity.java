@@ -1,5 +1,12 @@
 package com.spg.activity;
 
+import java.math.BigDecimal;
+import java.util.Random;
+
+import service.provider.common.core.RequestApplication;
+import service.provider.common.dto.SPGPostDto;
+import service.provider.common.request.RequestDtoFactory;
+import service.provider.common.request.SPGCreatePostRequestDto;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -7,6 +14,7 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
@@ -20,6 +28,7 @@ import android.widget.Toast;
 import com.spg.R;
 import com.spg.UserSession;
 import com.spg.utility.Devices;
+import com.spg.utility.ImageUtils;
 import com.spg.utility.SPClient;
 
 public class PostGourmetActivity extends Activity {
@@ -37,6 +46,14 @@ public class PostGourmetActivity extends Activity {
 	private int postButtonId = 10006;
 	private int locationEditTextId = 10007;
 	private GPSTracker gpsTracker;
+	private String deviceName;
+	private BigDecimal lattitude;
+	private BigDecimal longitude;
+	private EditText postCommentText;
+	private RatingBar tasteRating;
+	private RatingBar serviceRating;
+	private RatingBar speedRating;
+	private EditText locationText;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,18 +61,18 @@ public class PostGourmetActivity extends Activity {
 		setContentView(R.layout.activity_post_gourmet);
 		this.gpsTracker = new GPSTracker(this);
 		gpsTracker.getIsGPSTrackingEnabled();
-		String deviceName = Devices.getDeviceName();
+		deviceName = Devices.getDeviceName();
 
-		Thread saveImageThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				UserSession us = UserSession.getInstance();
-				Bitmap takenPicture = us.getTakenPicture();
-				SPClient.savePicture(takenPicture);
-			}
-		});
-		saveImageThread.start();
+		// Thread saveImageThread = new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// UserSession us = UserSession.getInstance();
+		// Bitmap takenPicture = us.getTakenPicture();
+		// SPClient.savePicture(takenPicture);
+		// }
+		// });
+		// saveImageThread.start();
 		layout = (RelativeLayout) findViewById(R.id.postGourmetMainLayout);
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
@@ -80,7 +97,7 @@ public class PostGourmetActivity extends Activity {
 		tasteTextView.setLayoutParams(relativeLayoutParameters);
 		tasteTextView.setId(tasteLabelId);
 		layout.addView(tasteTextView);
-		RatingBar tasteRating = new RatingBar(this);
+		tasteRating = new RatingBar(this);
 		tasteRating.setRating(5);
 		tasteRating.setId(tasteRatingId);
 		RelativeLayout.LayoutParams tasteViewRLParams = createNextToRightRelativeLayoutParams(tasteLabelId);
@@ -97,7 +114,7 @@ public class PostGourmetActivity extends Activity {
 		speedTextView.setId(speedLabelId);
 		speedTextView.setLayoutParams(lp);
 		layout.addView(speedTextView);
-		RatingBar speedRating = new RatingBar(this);
+		speedRating = new RatingBar(this);
 		speedRating.setRating(5);
 		lp = createBelowRelativeLayoutParams(tasteRatingId);
 		lp.addRule(RelativeLayout.RIGHT_OF, speedLabelId);
@@ -113,34 +130,66 @@ public class PostGourmetActivity extends Activity {
 		lp.setMargins(0, 45, 0, 0);
 		priceTextView.setLayoutParams(lp);
 		layout.addView(priceTextView);
-		RatingBar priceRating = new RatingBar(this);
-		priceRating.setRating(5);
+		serviceRating = new RatingBar(this);
+		serviceRating.setRating(5);
 		lp = createBelowRelativeLayoutParams(speedRatingId);
 		lp.addRule(RelativeLayout.RIGHT_OF, priceLabelId);
-		priceRating.setLayoutParams(lp);
-		layout.addView(priceRating);
-		EditText locationText = new EditText(this);
+		serviceRating.setLayoutParams(lp);
+		layout.addView(serviceRating);
+		locationText = new EditText(this);
 		locationText.setId(locationEditTextId);
 		lp = createBelowRelativeLayoutParams(priceLabelId);
 		locationText.setLayoutParams(lp);
 		locationText.setHint(getResources().getString(R.string.unknownLocation));
 		layout.addView(locationText);
-		EditText editText = new EditText(this);
-		editText.setId(editTextId);
+		postCommentText = new EditText(this);
+		postCommentText.setId(editTextId);
 		lp = createBelowRelativeLayoutParams(locationEditTextId);
-		editText.setLayoutParams(lp);
-		editText.setHint(getResources().getString(R.string.enterYourThoughts));
-		layout.addView(editText);
+		postCommentText.setLayoutParams(lp);
+		postCommentText.setHint(getResources().getString(R.string.enterYourThoughts));
+		layout.addView(postCommentText);
 		Button postButton = new Button(this);
 		postButton.setId(postButtonId);
 		lp = createBelowRelativeLayoutParams(editTextId);
 		postButton.setLayoutParams(lp);
 		postButton.setText(getResources().getString(R.string.postGourme));
-		layout.addView(postButton);
-		double longitude = gpsTracker.getLongitude();
-		double latitude = gpsTracker.getLatitude();
+		postButton.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				postGourme();
+			}
 
-		Toast.makeText(getBaseContext(), "Long:" + longitude + " , Lattitude:" + latitude + " , DeviceName:" + deviceName, Toast.LENGTH_LONG).show();
+		});
+		layout.addView(postButton);
+		longitude = new BigDecimal(gpsTracker.getLongitude());
+		lattitude = new BigDecimal(gpsTracker.getLatitude());
+		Toast.makeText(getBaseContext(), "Long:" + longitude + " , Lattitude:" + lattitude + " , DeviceName:" + deviceName, Toast.LENGTH_LONG).show();
+	}
+
+	private void postGourme() {
+		SPGCreatePostRequestDto postRequest = RequestDtoFactory.createSPGPostRequest(RequestApplication.SPG);
+		SPGPostDto postDto = new SPGPostDto();
+		postDto.setDeviceModel(deviceName);
+		UserSession us = UserSession.getInstance();
+		Bitmap takenPicture = us.getTakenPicture();
+		String encodedData = ImageUtils.createEncodedStringFromBitmap(takenPicture);
+		postDto.setImageData(encodedData);
+		postDto.setLocationLattitude(lattitude.setScale(4, BigDecimal.ROUND_HALF_UP));
+		postDto.setLocationLongitude(longitude.setScale(4, BigDecimal.ROUND_HALF_UP));
+		postDto.setPostComment(postCommentText.getText().toString());
+		postDto.setService(new BigDecimal(serviceRating.getRating()));
+		postDto.setSpeed(new BigDecimal(speedRating.getRating()));
+		BigDecimal tasteDecimal = new BigDecimal(tasteRating.getRating());
+		postDto.setTaste(tasteDecimal);
+		postDto.setLocationName(locationText.getText().toString());
+		Random random = new Random();
+		postDto.setUserId(Math.abs(random.nextLong()));
+		postRequest.setPostDto(postDto);
+		Boolean postGourmeResult = SPClient.postGourme(postRequest);
+		if (Boolean.TRUE.equals(postGourmeResult)) {
+			Toast.makeText(getBaseContext(), "Post Success", Toast.LENGTH_LONG).show();
+		} else {
+			Toast.makeText(getBaseContext(), "!!!!Post FAIL!!!", Toast.LENGTH_LONG).show();
+		}
 	}
 
 	private android.widget.RelativeLayout.LayoutParams createNextToRightRelativeLayoutParams(int viewId) {
