@@ -18,6 +18,14 @@ import android.util.Log;
 
 public class GPSTracker extends Service implements LocationListener {
 
+	private static GPSTracker instance;
+
+	public static synchronized GPSTracker getInstance(Context context) {
+		if (instance == null)
+			instance = new GPSTracker(context);
+		return instance;
+	}
+
 	// Get Class Name
 	private static String TAG = GPSTracker.class.getName();
 
@@ -52,7 +60,7 @@ public class GPSTracker extends Service implements LocationListener {
 	// information
 	private String provider_info;
 
-	public GPSTracker(Context context) {
+	private GPSTracker(Context context) {
 		this.mContext = context;
 		getLocation();
 	}

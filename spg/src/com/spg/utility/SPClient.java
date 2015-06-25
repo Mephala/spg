@@ -1,22 +1,29 @@
 package com.spg.utility;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import service.provider.client.executor.ServiceClient;
 import service.provider.common.core.RequestApplication;
 import service.provider.common.core.ResponseStatus;
 import service.provider.common.dto.ImageDto;
+import service.provider.common.dto.LightSPGPostDto;
 import service.provider.common.request.GetAllImageIdsRequestDto;
 import service.provider.common.request.GetImageRequestDto;
+import service.provider.common.request.GetNearestPostsRequestDto;
 import service.provider.common.request.RequestDtoFactory;
 import service.provider.common.request.SPGCreatePostRequestDto;
 import service.provider.common.request.SaveImageRequestDto;
 import service.provider.common.response.GetAllImageIdsResponseDto;
 import service.provider.common.response.GetImageResponseDto;
+import service.provider.common.response.GetNearestPostsResponseDto;
 import service.provider.common.response.SPGCreatePostResponseDto;
 import service.provider.common.response.SaveImageResponseDto;
 import android.graphics.Bitmap;
@@ -84,6 +91,28 @@ public class SPClient {
 		if (response == null)
 			return null;
 		return response.getImageIds();
+	}
+
+	public static List<LightSPGPostDto> getNearbyPosts(final double lattitude, final double longitude) throws InterruptedException, ExecutionException, TimeoutException {
+		ExecutorService getNearbyPostExecutor = Executors.newCachedThreadPool();
+		Future<List<LightSPGPostDto>> postsFuture = getNearbyPostExecutor.submit(new Callable<List<LightSPGPostDto>>() {
+
+			@Override
+			public List<LightSPGPostDto> call() throws Exception {
+				return getNearbyPostsInner(lattitude, longitude);
+			}
+		});
+		return postsFuture.get(Timeouts.GET_NEAREST_POSTS_TIMEOUT, TimeUnit.MILLISECONDS);
+	}
+
+	private static List<LightSPGPostDto> getNearbyPostsInner(double lattitude, double longitude) {
+		GetNearestPostsRequestDto request = RequestDtoFactory.createGetNearestPostsRequest(RequestApplication.SPG);
+		request.setLattitude(new BigDecimal(lattitude));
+		request.setLongitude(new BigDecimal(longitude));
+		request.setMaxResult(10);
+		GetNearestPostsResponseDto response = ServiceClient.getNearestPosts(request);
+		List<LightSPGPostDto> lightSPGPosts = response.getNearestPosts();
+		return lightSPGPosts;
 	}
 
 }

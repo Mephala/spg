@@ -59,7 +59,7 @@ public class PostGourmetActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_post_gourmet);
-		this.gpsTracker = new GPSTracker(this);
+		this.gpsTracker = GPSTracker.getInstance(this);
 		gpsTracker.getIsGPSTrackingEnabled();
 		deviceName = Devices.getDeviceName();
 
