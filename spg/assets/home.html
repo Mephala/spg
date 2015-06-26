@@ -19,20 +19,38 @@
 <script type="text/javascript" src="scripts/custom.js"></script>
 
 <script type="text/javascript">
-	document.addEventListener("DOMContentLoaded", function(event) {		
+// 	document.addEventListener("DOMContentLoaded", function(event) {		
+// 		android.loadPage();
+// 	});
+
+(function($) {
+	$( document ).ready(function() {
 		android.loadPage();
-	});
+	});	
+})(jQuery);
+
      function load(data){  
 	     var obj = eval ("(" + data + ")"); 
 	     var html = "";
-	     html = html +  "<a href=\"#\" class=\"user-list-item\">"+
-         "<img src=\"images/pictures/1s.jpg\" alt=\"img\">"+
-         "<strong>"+ obj.createrName + "<br></strong>"+
-         "<em>United States, New York, NY </em>" +
-         " <i class=\"fa fa-chevron-right\"></i>" +
-     	 "</a>";
+	     var array = obj;
+	     var arrayLength = array.length;
+	     for (var i = 0; i < arrayLength; i++) {
+	    	 obj = array[i];
+	 	     html = html +  "<a href=\"#\" class=\"user-list-item\">"+
+	          "<img src=\"images/pictures/1s.jpg\" alt=\"img\">"+
+	          "<strong>"+ obj.createrName + "<br></strong>"+
+	          "<em>"+obj.locationName + "</em>" +
+	          "<div class=\"viz-wrap smart-rating\" style=\"width:45px;height:45px;\"><svg"+
+	          " class=\"smart-viz\" style=\"margin:4px;\" width=\"40\" height=\"40\"><g" +
+	 	   	  " transform=\"scale(0.9418604651162791)\"><circle class=\"color\" " +
+              " cx=\"21\" cy=\"21\" r=\"21\" fill=\"#ffdb49\"></circle><circle class=\"ring\" " +
+              " cx=\"21\" cy=\"21\" r=\"11\" fill=\"#fff\"></circle><polygon points=\"43 7 51 23 35 23\" " +
+              " fill=\"#fff\" transform=\"rotate(187 43 43)\"></polygon><text" +
+              " x=\"21\" y=\"25\" text-anchor=\"middle\" fill=\"#4d4d4d\" style=\"font-size: 81%;\">" + obj.average + "</text></g></svg></div>" +
+	          " <i class=\"fa fa-chevron-right\"></i>" +
+	          "</a>";
+	     }
 	     
-	       
 	     var x=document.getElementById("postsDiv");  
 	       <!--x.innerHTML = "<p>"+ message+"</p>";-->  
 	     x.innerHTML = html; 	    

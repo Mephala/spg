@@ -90,15 +90,9 @@ public class MainActivity extends Activity {
 					LightSPGPostDto lightSpgPost = lightSPGPosts.get(0);
 					ObjectMapper mapper = new ObjectMapper();
 					try {
-						String jsonConversion = mapper.writeValueAsString(lightSpgPost);
+						String jsonConversion = mapper.writeValueAsString(lightSPGPosts);
 						wv.loadUrl("javascript:load('" + jsonConversion + "');");
-					} catch (JsonGenerationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (JsonMappingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
+					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
