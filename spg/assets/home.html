@@ -31,29 +31,70 @@
 
      function load(data){  
 	     var obj = eval ("(" + data + ")"); 
-	     var html = "";
+	     var column1html = "";
+	     var column2html = "";
+	     var column3html = "";
 	     var array = obj;
 	     var arrayLength = array.length;
 	     for (var i = 0; i < arrayLength; i++) {
 	    	 obj = array[i];
-	 	     html = html +  "<a href=\"#\" class=\"user-list-item\">"+
-	          "<img src=\"images/pictures/1s.jpg\" alt=\"img\">"+
-	          "<strong>"+ obj.createrName + "<br></strong>"+
-	          "<em>"+obj.locationName + "</em>" +
-	          "<div class=\"viz-wrap smart-rating\" style=\"width:45px;height:45px;\"><svg"+
-	          " class=\"smart-viz\" style=\"margin:4px;\" width=\"40\" height=\"40\"><g" +
-	 	   	  " transform=\"scale(0.9418604651162791)\"><circle class=\"color\" " +
-              " cx=\"21\" cy=\"21\" r=\"21\" fill=\"#ffdb49\"></circle><circle class=\"ring\" " +
-              " cx=\"21\" cy=\"21\" r=\"11\" fill=\"#fff\"></circle><polygon points=\"43 7 51 23 35 23\" " +
-              " fill=\"#fff\" transform=\"rotate(187 43 43)\"></polygon><text" +
-              " x=\"21\" y=\"25\" text-anchor=\"middle\" fill=\"#4d4d4d\" style=\"font-size: 81%;\">" + obj.average + "</text></g></svg></div>" +
-	          " <i class=\"fa fa-chevron-right\"></i>" +
-	          "</a>";
+	    	 if(i%3 ==0){
+	    		 var addHtml = "<a href=\"#\" class=\"user-list-item\">"+
+		          "<img src=\"images/pictures/1s.jpg\" alt=\"img\">"+
+		          "<strong>"+ obj.createrName + "<br></strong>"+
+		          "<em>"+obj.locationName + "</em>" +
+		          "<div class=\"viz-wrap smart-rating\" style=\"width:45px;height:45px;\"><svg"+
+		          " class=\"smart-viz\" style=\"margin:4px;\" width=\"40\" height=\"40\"><g" +
+		 	   	  " transform=\"scale(0.9418604651162791)\"><circle class=\"color\" " +
+	              " cx=\"21\" cy=\"21\" r=\"21\" fill=\"#ffdb49\"></circle><circle class=\"ring\" " +
+	              " cx=\"21\" cy=\"21\" r=\"11\" fill=\"#fff\"></circle><polygon points=\"43 7 51 23 35 23\" " +
+	              " fill=\"#fff\" transform=\"rotate(187 43 43)\"></polygon><text" +
+	              " x=\"21\" y=\"25\" text-anchor=\"middle\" fill=\"#4d4d4d\" style=\"font-size: 81%;\">" + obj.average + "</text></g></svg></div>" +
+		          " <i class=\"fa fa-chevron-right\"></i>" +
+		          "</a>" +  "<div class=\"decoration\"></div>";
+	    		 column1html = column1html + addHtml;
+	    	 }else if(i%3 ==1){
+	    		 var addHtml = " <p class=\"user-list-follow\"> " +
+                 "<img src=\"images/pictures/1s.jpg\" alt=\"img\"> " +
+                 "<strong>"+ obj.createrName + "<br><em>"+obj.locationName+ "</em></strong> " +
+                 "<div class=\"viz-wrap smart-rating\" style=\"width:45px;height:45px;\"><svg"+
+		          " class=\"smart-viz\" style=\"margin:4px;\" width=\"40\" height=\"40\"><g" +
+		 	   	  " transform=\"scale(0.9418604651162791)\"><circle class=\"color\" " +
+	              " cx=\"21\" cy=\"21\" r=\"21\" fill=\"#ffdb49\"></circle><circle class=\"ring\" " +
+	              " cx=\"21\" cy=\"21\" r=\"11\" fill=\"#fff\"></circle><polygon points=\"43 7 51 23 35 23\" " +
+	              " fill=\"#fff\" transform=\"rotate(187 43 43)\"></polygon><text" +
+	              " x=\"21\" y=\"25\" text-anchor=\"middle\" fill=\"#4d4d4d\" style=\"font-size: 81%;\">" + obj.average + "</text></g></svg></div>" +                 
+             	 "</p> " + 
+                 "<div class=\"decoration\"></div> ";  
+	    		 column2html = column2html + addHtml;
+	    	 }else{
+	    		 var addHtml =  "<p class=\"user-list-socials\"> " +
+                 "<img src=\"images/pictures/1s.jpg\" alt=\"img\"> "+
+                 "<strong>"+obj.createrName+ "<br><em>"+ obj.locationName +"</em></strong> " +
+                 "<div class=\"viz-wrap smart-rating\" style=\"width:45px;height:45px;\"><svg"+
+		          " class=\"smart-viz\" style=\"margin:4px;\" width=\"40\" height=\"40\"><g" +
+		 	   	  " transform=\"scale(0.9418604651162791)\"><circle class=\"color\" " +
+	              " cx=\"21\" cy=\"21\" r=\"21\" fill=\"#ffdb49\"></circle><circle class=\"ring\" " +
+	              " cx=\"21\" cy=\"21\" r=\"11\" fill=\"#fff\"></circle><polygon points=\"43 7 51 23 35 23\" " +
+	              " fill=\"#fff\" transform=\"rotate(187 43 43)\"></polygon><text" +
+	              " x=\"21\" y=\"25\" text-anchor=\"middle\" fill=\"#4d4d4d\" style=\"font-size: 81%;\">" + obj.average + "</text></g></svg></div>" +               
+                 "</p> " +
+                 "<div class=\"decoration\"></div> "; 
+	    		 column3html = column3html + addHtml;
+	    	 }	    	 
+	 	     
 	     }
 	     
-	     var x=document.getElementById("postsDiv");  
+	     
+	     var colm1=document.getElementById("postsDivColm1");  
 	       <!--x.innerHTML = "<p>"+ message+"</p>";-->  
-	     x.innerHTML = html; 	    
+	       colm1.innerHTML = column1html; 	    
+	     var colm2=document.getElementById("postsDivColm2");  
+	       <!--x.innerHTML = "<p>"+ message+"</p>";-->  
+	       colm2.innerHTML = column2html; 	    
+	     var colm3=document.getElementById("postsDivColm3");  
+	       <!--x.innerHTML = "<p>"+ message+"</p>";-->  
+	       colm3.innerHTML = column3html; 	    
      }  
      function signup(){  
      var txt_username = document.getElementById("txt_username").value;  
@@ -184,7 +225,7 @@
             </div>
             
             <div class="decoration"></div>
-            <div class="one-third-responsive" id="postsDiv">
+            <div class="one-third-responsive" id="postsDivColm1">
                 <a href="#" class="user-list-item">
                     <img src="images/pictures/1s.jpg" alt="img">
                     <strong>User One<br></strong>
@@ -214,6 +255,64 @@
                 </a>
                 <div class="decoration"></div>
             </div>
+            
+            <div class="one-third-responsive" id="postsDivColm2">
+                <p class="user-list-follow">
+                    <img src="images/pictures/1s.jpg" alt="img">
+                    <strong>User One<br><em>Some sample text here.</em></strong>
+                    <a href="#" class="follow">Follow</a>
+                </p>
+                <div class="decoration"></div>                
+                <p class="user-list-follow">
+                    <img src="images/pictures/2s.jpg" alt="img">
+                    <strong>User Two<br><em>Some sample text here.</em></strong>
+                    <a href="#" class="follow">Follow</a>
+                </p>
+                <div class="decoration"></div>                
+                <p class="user-list-follow">
+                    <img src="images/pictures/3s.jpg" alt="img">
+                    <strong>User Three<br><em>Some sample text here.</em></strong>
+                    <a href="#" class="follow">Follow</a>
+                </p>
+                <div class="decoration"></div>                
+                <p class="user-list-follow">
+                    <img src="images/pictures/4s.jpg" alt="img">
+                    <strong>User Four<br><em>Some sample text here.</em></strong>
+                    <a href="#" class="follow">Follow</a>
+                </p>
+                <div class="decoration"></div>
+            </div>            
+            
+            <div class="one-third-responsive last-column" id="postsDivColm3">
+                <p class="user-list-socials">
+                    <img src="images/pictures/1s.jpg" alt="img">
+                    <strong>User One<br><em>User is on his socials</em></strong>
+                    <a href="#" class="icon1 facebook-color"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="icon2 twitter-color"><i class="fa fa-twitter"></i></a>
+                </p>
+                <div class="decoration"></div>                
+                <p class="user-list-socials">
+                    <img src="images/pictures/2s.jpg" alt="img">
+                    <strong>User Two<br><em>User is on his socials</em></strong>
+                    <a href="#" class="icon1 google-color"><i class="fa fa-google-plus"></i></a>
+                    <a href="#" class="icon2 facebook-color"><i class="fa fa-facebook"></i></a>
+                </p>
+                <div class="decoration"></div>                
+                <p class="user-list-socials">
+                    <img src="images/pictures/3s.jpg" alt="img">
+                    <strong>User Three<br><em>User is on his socials</em></strong>
+                    <a href="#" class="icon1 twitter-color"><i class="fa fa-twitter"></i></a>
+                    <a href="#" class="icon2 google-color"><i class="fa fa-google-plus"></i></a>
+                </p>
+                <div class="decoration"></div>                
+                <p class="user-list-socials">
+                    <img src="images/pictures/4s.jpg" alt="img">
+                    <strong>User Four<br><em>User is on his socials</em></strong>
+                    <a href="#" class="icon1 facebook-color"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="icon2 twitter-color"><i class="fa fa-twitter"></i></a>
+                </p>
+                <div class="decoration"></div>
+            </div>   
             
              
             
